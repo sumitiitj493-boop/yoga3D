@@ -1,0 +1,123 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Asanas Gallery - Yoga 3D</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: #f5f5f5;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 80px auto 20px;
+        padding: 20px;
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
+      }
+      .filters {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .filters button {
+        padding: 10px 20px;
+        margin: 5px;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        background: #667eea;
+        color: white;
+        font-size: 16px;
+      }
+      .filters button:hover {
+        background: #5568d3;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+      }
+      .card h3 {
+        margin: 0 0 10px 0;
+        color: #667eea;
+      }
+      .card p {
+        color: #666;
+        line-height: 1.6;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li><a href="/">🧘 3D Viewer</a></li>
+        <li><a href="/asanas.html">📚 Gallery</a></li>
+        <li><a href="/dashboard.html">📊 Dashboard</a></li>
+        <li><a href="/about.html">ℹ️ About</a></li>
+        <li id="auth-link"><a href="/login.html">🔐 Login</a></li>
+      </ul>
+    </nav>
+
+    <div class="container">
+      <h1>Yoga Asanas Gallery</h1>
+      <div class="filters">
+        <button onclick="filterPoses('all')">All</button>
+        <button onclick="filterPoses('Beginner')">Beginner</button>
+        <button onclick="filterPoses('Intermediate')">Intermediate</button>
+        <button onclick="filterPoses('Advanced')">Advanced</button>
+      </div>
+      <div class="grid" id="gallery"></div>
+    </div>
+
+    <script src="assets/js/api.js"></script>
+    <script>
+      let allPoses = [];
+
+      async function loadGallery() {
+        const res = await fetch("/api/asanas");
+        const data = await res.json();
+        allPoses = data.data;
+        displayPoses(allPoses);
+
+        // Update auth link
+        const authLink = document.getElementById("auth-link");
+        if (window.yogaAPI && yogaAPI.isAuthenticated()) {
+          authLink.innerHTML = `<a href="/dashboard.html">👤 ${yogaAPI.user.name}</a>`;
+        }
+      }
+
+      function displayPoses(poses) {
+        const gallery = document.getElementById("gallery");
+        gallery.innerHTML = poses
+          .map(
+            (asana) => `
+                <div class="card">
+                    <span class="badge ${asana.difficulty.toLowerCase()}">${asana.difficulty}</span>
+                    <h3>${asana.name}</h3>
+                    <p><em>${asana.sanskritName}</em></p>
+                    <p>${asana.description}</p>
+                    <p><strong>Benefits:</strong> ${asana.benefits.join(", ")}</p>
+                </div>
+            `,
+          )
+          .join("");
+      }
+
+      function filterPoses(difficulty) {
+        if (difficulty === "all") {
+          displayPoses(allPoses);
+        } else {
+          const filtered = allPoses.filter((p) => p.difficulty === difficulty);
+          displayPoses(filtered);
+        }
+      }
+
+      loadGallery();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,425 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Yoga 3D Viewer</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", sans-serif;
+        overflow: hidden;
+      }
+      #ui {
+        position: absolute;
+        top: 80px;
+        left: 20px;
+        color: white;
+        background: rgba(0, 0, 0, 0.9);
+        padding: 25px;
+        border-radius: 12px;
+        width: 320px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      }
+      h2 {
+        margin: 0 0 15px 0;
+        font-size: 24px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      select {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        font-size: 16px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+      }
+      h3 {
+        margin: 15px 0 8px 0;
+        font-size: 20px;
+        color: #667eea;
+      }
+      p {
+        line-height: 1.6;
+        font-size: 14px;
+        color: #e0e0e0;
+      }
+      .badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        margin-top: 10px;
+        font-weight: bold;
+      }
+      .benefits {
+        margin-top: 10px;
+        font-size: 13px;
+      }
+      .benefits li {
+        margin: 5px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li><a href="/">🧘 3D Viewer</a></li>
+        <li><a href="/asanas.html">📚 Gallery</a></li>
+        <li><a href="/dashboard.html">📊 Dashboard</a></li>
+        <li><a href="/about.html">ℹ️ About</a></li>
+        <li id="auth-link"><a href="/login.html">🔐 Login</a></li>
+      </ul>
+    </nav>
+
+    <div id="ui">
+      <h2>🧘 Yoga 3D Viewer</h2>
+      <select id="asana-select">
+        <option>Loading poses...</option>
+      </select>
+      <h3 id="pose-name">Select a Pose</h3>
+      <p id="pose-desc">Choose a yoga pose to view its 3D representation.</p>
+      <span id="difficulty-badge" class="badge" style="display: none"
+        >Beginner</span
+      >
+      <ul class="benefits" id="benefits-list"></ul>
+
+      <!-- Practice Controls -->
+      <div id="practice-controls" style="margin-top: 15px; display: none">
+        <button
+          id="favorite-btn"
+          onclick="toggleFavorite()"
+          style="
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #ff9800;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+          "
+        >
+          ❤️ Add to Favorites
+        </button>
+        <div
+          style="
+            background: rgba(102, 126, 234, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+          "
+        >
+          <h4 style="margin: 0 0 10px 0; color: #667eea">⏱️ Practice Timer</h4>
+          <div
+            id="timer-display"
+            style="
+              font-size: 32px;
+              text-align: center;
+              color: #667eea;
+              margin: 10px 0;
+            "
+          >
+            00:00
+          </div>
+          <button
+            id="timer-btn"
+            onclick="toggleTimer()"
+            style="
+              width: 100%;
+              padding: 10px;
+              margin-bottom: 10px;
+              border: none;
+              border-radius: 8px;
+              cursor: pointer;
+              background: #4caf50;
+              color: white;
+              font-size: 14px;
+              font-weight: bold;
+            "
+          >
+            ▶️ Start Practice
+          </button>
+          <button
+            id="save-session-btn"
+            onclick="savePracticeSession()"
+            style="
+              width: 100%;
+              padding: 10px;
+              border: none;
+              border-radius: 8px;
+              cursor: pointer;
+              background: #667eea;
+              color: white;
+              font-size: 14px;
+              font-weight: bold;
+              display: none;
+            "
+          >
+            💾 Save Session
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/3d-viewer.js"></script>
+
+    <script>
+      // Global variables
+      let currentAsana = null;
+      let timerInterval = null;
+      let timerSeconds = 0;
+      let isTimerRunning = false;
+
+      // Initialize the 3D viewer
+      const viewer = new YogaPoseViewer("body", {
+        backgroundColor: 0x1a1a2e,
+        enableShadows: true,
+        enableGrid: true,
+        cameraPosition: { x: 3, y: 3, z: 8 },
+      });
+
+      // Start the animation loop
+      viewer.animate();
+
+      // Function to update pose (will try to load model first, then fallback to procedural)
+      async function setPose(poseName, difficulty, modelUrl) {
+        // Try to load the 3D model first
+        if (modelUrl) {
+          try {
+            console.log(`Attempting to load model: ${modelUrl}`);
+            await viewer.loadModel(modelUrl, (progress) => {
+              console.log(
+                `Loading ${poseName}: ${Math.round(progress * 100)}%`,
+              );
+            });
+            console.log(`✅ Successfully loaded 3D model for ${poseName}`);
+            return;
+          } catch (error) {
+            console.warn(
+              `⚠️ Could not load model for ${poseName}, using procedural pose instead`,
+            );
+            console.warn(`Model URL: ${modelUrl}`);
+            console.warn(`Error: ${error.message}`);
+          }
+        }
+
+        // Fallback to procedural pose
+        viewer.loadPose(poseName, difficulty);
+      }
+
+      // Load asanas from API
+      async function loadAsanas() {
+        try {
+          const response = await fetch("/api/asanas");
+          const data = await response.json();
+
+          const select = document.getElementById("asana-select");
+          select.innerHTML =
+            '<option value="">-- Choose a Yoga Pose --</option>';
+
+          data.data.forEach((asana) => {
+            const option = document.createElement("option");
+            option.value = JSON.stringify(asana);
+            option.text = `${asana.name} (${asana.sanskritName})`;
+            select.appendChild(option);
+          });
+
+          select.addEventListener("change", (e) => {
+            if (e.target.value) {
+              const asana = JSON.parse(e.target.value);
+              updatePose(asana);
+            }
+          });
+
+          // Update auth link
+          updateAuthLink();
+        } catch (error) {
+          console.error("Error loading asanas:", error);
+          document.getElementById("asana-select").innerHTML =
+            "<option>Error: Check backend</option>";
+        }
+      }
+
+      function updatePose(asana) {
+        currentAsana = asana;
+        document.getElementById("pose-name").innerText = asana.name;
+        document.getElementById("pose-desc").innerText = asana.description;
+
+        const badge = document.getElementById("difficulty-badge");
+        badge.innerText = asana.difficulty;
+        badge.className = "badge " + asana.difficulty.toLowerCase();
+        badge.style.display = "inline-block";
+
+        // Update benefits list
+        const benefitsList = document.getElementById("benefits-list");
+        benefitsList.innerHTML = asana.benefits
+          .map((b) => `<li>✓ ${b}</li>`)
+          .join("");
+
+        // Change pose - try to load 3D model or use procedural
+        setPose(asana.name, asana.difficulty, asana.modelUrl);
+
+        // Show practice controls if logged in
+        if (yogaAPI.isAuthenticated()) {
+          document.getElementById("practice-controls").style.display = "block";
+          updateFavoriteButton();
+        }
+
+        // Reset timer
+        resetTimer();
+      }
+
+      // Timer functions
+      function toggleTimer() {
+        if (isTimerRunning) {
+          stopTimer();
+        } else {
+          startTimer();
+        }
+      }
+
+      function startTimer() {
+        isTimerRunning = true;
+        const timerBtn = document.getElementById("timer-btn");
+        timerBtn.textContent = "⏸️ Pause Practice";
+        timerBtn.style.background = "#FF9800";
+
+        timerInterval = setInterval(() => {
+          timerSeconds++;
+          updateTimerDisplay();
+        }, 1000);
+      }
+
+      function stopTimer() {
+        isTimerRunning = false;
+        clearInterval(timerInterval);
+        const timerBtn = document.getElementById("timer-btn");
+        timerBtn.textContent = "▶️ Resume Practice";
+        timerBtn.style.background = "#4CAF50";
+
+        if (timerSeconds > 0) {
+          document.getElementById("save-session-btn").style.display = "block";
+        }
+      }
+
+      function resetTimer() {
+        isTimerRunning = false;
+        timerSeconds = 0;
+        clearInterval(timerInterval);
+        updateTimerDisplay();
+        const timerBtn = document.getElementById("timer-btn");
+        timerBtn.textContent = "▶️ Start Practice";
+        timerBtn.style.background = "#4CAF50";
+        document.getElementById("save-session-btn").style.display = "none";
+      }
+
+      function updateTimerDisplay() {
+        const minutes = Math.floor(timerSeconds / 60);
+        const seconds = timerSeconds % 60;
+        document.getElementById("timer-display").textContent =
+          `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+            2,
+            "0",
+          )}`;
+      }
+
+      async function savePracticeSession() {
+        if (!yogaAPI.isAuthenticated()) {
+          alert("Please login to save your practice session");
+          return;
+        }
+
+        if (!currentAsana || timerSeconds === 0) {
+          alert("Start practicing a pose first!");
+          return;
+        }
+
+        try {
+          const response = await yogaAPI.recordPractice(currentAsana._id, {
+            duration: timerSeconds,
+            feedback: "Practice session completed",
+          });
+
+          alert(
+            `✅ Session saved! ${Math.round(timerSeconds / 60)} minutes practiced.\nStreak: ${
+              response.userStats.streak
+            } days\nTotal practice time: ${
+              response.userStats.totalPracticeTime
+            } minutes`,
+          );
+          resetTimer();
+        } catch (error) {
+          console.error("Error saving session:", error);
+          alert("Failed to save session. Please try again.");
+        }
+      }
+
+      async function toggleFavorite() {
+        if (!yogaAPI.isAuthenticated()) {
+          alert("Please login to add favorites");
+          window.location.href = "/login.html";
+          return;
+        }
+
+        if (!currentAsana) return;
+
+        try {
+          await yogaAPI.toggleFavorite(currentAsana._id);
+          updateFavoriteButton();
+        } catch (error) {
+          console.error("Error toggling favorite:", error);
+          alert("Failed to update favorite. Please try again.");
+        }
+      }
+
+      function updateFavoriteButton() {
+        if (!yogaAPI.user || !currentAsana) return;
+
+        const btn = document.getElementById("favorite-btn");
+        const isFavorite =
+          yogaAPI.user.favoritePoses &&
+          yogaAPI.user.favoritePoses.some(
+            (p) => p._id === currentAsana._id || p === currentAsana._id,
+          );
+
+        if (isFavorite) {
+          btn.textContent = "💔 Remove from Favorites";
+          btn.style.background = "#F44336";
+        } else {
+          btn.textContent = "❤️ Add to Favorites";
+          btn.style.background = "#FF9800";
+        }
+      }
+
+      function updateAuthLink() {
+        const authLink = document.getElementById("auth-link");
+        if (yogaAPI.isAuthenticated()) {
+          authLink.innerHTML = `<a href="/dashboard.html">👤 ${yogaAPI.user.name}</a>`;
+        } else {
+          authLink.innerHTML = '<a href="/login.html">🔐 Login</a>';
+        }
+      }
+
+      window.addEventListener("resize", () => {
+        viewer.camera.aspect = window.innerWidth / window.innerHeight;
+        viewer.camera.updateProjectionMatrix();
+        viewer.renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      loadAsanas();
+    </script>
+  </body>
+</html>

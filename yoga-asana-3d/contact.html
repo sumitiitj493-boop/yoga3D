@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact - Yoga 3D</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 700px;
+        margin: 100px auto 40px;
+        padding: 40px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      }
+      h1 {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      p {
+        line-height: 1.8;
+        color: #555;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin: 30px 0;
+      }
+      .contact-card {
+        background: #f9f9f9;
+        padding: 25px;
+        border-radius: 12px;
+        text-align: center;
+        border: 2px solid #eee;
+        transition: all 0.3s;
+      }
+      .contact-card:hover {
+        border-color: #667eea;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+      }
+      .contact-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+      }
+      .contact-card h3 {
+        color: #667eea;
+        margin-bottom: 10px;
+      }
+      .contact-card a {
+        color: #666;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .contact-card a:hover {
+        color: #667eea;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: 600;
+      }
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #eee;
+        border-radius: 8px;
+        font-size: 16px;
+        font-family: "Segoe UI", sans-serif;
+      }
+      .form-group input:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+      .btn {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        transition: all 0.3s;
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      }
+      .success-message {
+        background: #efe;
+        color: #3c3;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: none;
+        text-align: center;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li><a href="/">🧘 3D Viewer</a></li>
+        <li><a href="/asanas.html">📚 Gallery</a></li>
+        <li><a href="/dashboard.html">📊 Dashboard</a></li>
+        <li><a href="/about.html">ℹ️ About</a></li>
+        <li id="auth-link"><a href="/login.html">🔐 Login</a></li>
+      </ul>
+    </nav>
+
+    <div class="container">
+      <h1>📧 Get in Touch</h1>
+      <p>
+        Have questions, feedback, or suggestions? We'd love to hear from you!
+      </p>
+
+      <div class="contact-grid">
+        <div class="contact-card">
+          <div class="contact-icon">📧</div>
+          <h3>Email</h3>
+          <a href="mailto:support@yoga3d.com">support@yoga3d.com</a>
+        </div>
+        <div class="contact-card">
+          <div class="contact-icon">💬</div>
+          <h3>Discord</h3>
+          <a href="#">Join our community</a>
+        </div>
+        <div class="contact-card">
+          <div class="contact-icon">🐦</div>
+          <h3>Twitter</h3>
+          <a href="#">@yoga3d</a>
+        </div>
+      </div>
+
+      <h2 style="color: #667eea; margin: 40px 0 20px; text-align: center">
+        Send Us a Message
+      </h2>
+
+      <div id="success-message" class="success-message">
+        ✅ Thank you! Your message has been sent successfully.
+      </div>
+
+      <form id="contact-form">
+        <div class="form-group">
+          <label for="name">Your Name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            required
+            placeholder="John Doe"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Your Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            placeholder="your@email.com"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="subject">Subject</label>
+          <input
+            type="text"
+            id="subject"
+            name="subject"
+            required
+            placeholder="How can we help?"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea
+            id="message"
+            name="message"
+            rows="6"
+            required
+            placeholder="Tell us what's on your mind..."
+          ></textarea>
+        </div>
+
+        <button type="submit" class="btn">Send Message</button>
+      </form>
+
+      <div
+        style="
+          margin-top: 40px;
+          padding-top: 30px;
+          border-top: 2px solid #eee;
+          text-align: center;
+          color: #666;
+        "
+      >
+        <p><strong>Frequently Asked Questions</strong></p>
+        <ul style="list-style: none; padding: 0; line-height: 2">
+          <li>
+            🔒 Is my data secure?
+            <em>Yes, we use industry-standard encryption.</em>
+          </li>
+          <li>
+            💰 Is Yoga 3D free? <em>Yes, all features are completely free!</em>
+          </li>
+          <li>
+            📱 Is there a mobile app?
+            <em>Currently web-only, but mobile-responsive.</em>
+          </li>
+          <li>
+            🌍 Can I suggest new poses?
+            <em>Absolutely! Contact us with your ideas.</em>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <script src="assets/js/api.js"></script>
+    <script>
+      // Update auth link
+      const authLink = document.getElementById("auth-link");
+      if (window.yogaAPI && yogaAPI.isAuthenticated()) {
+        authLink.innerHTML = `<a href="/dashboard.html">👤 ${yogaAPI.user.name}</a>`;
+      }
+
+      // Handle form submission
+      document
+        .getElementById("contact-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          // In a real application, you would send this to a backend
+          const formData = {
+            name: document.getElementById("name").value,
+            email: document.getElementById("email").value,
+            subject: document.getElementById("subject").value,
+            message: document.getElementById("message").value,
+          };
+
+          console.log("Contact form submitted:", formData);
+
+          // Show success message
+          document.getElementById("success-message").style.display = "block";
+          document.getElementById("contact-form").reset();
+
+          // Hide success message after 5 seconds
+          setTimeout(() => {
+            document.getElementById("success-message").style.display = "none";
+          }, 5000);
+        });
+    </script>
+  </body>
+</html>
