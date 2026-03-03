@@ -15,10 +15,16 @@ const asanaSchema = new mongoose.Schema({
     description: String,
     benefits: [String],
     imageUrl: String,
-    // 🌟 3D Model URL for the viewer
+    // 🌟 3D Model URL - can be GLB file path or Sketchfab embed URL
     modelUrl: {
         type: String, 
         default: '' 
+    },
+    // 🌟 Type of 3D model
+    modelType: {
+        type: String,
+        enum: ['glb', 'sketchfab', 'procedural'],
+        default: 'procedural'
     }
 }, {
     timestamps: true
