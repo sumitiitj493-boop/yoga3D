@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -42,7 +43,17 @@ const userSchema = new mongoose.Schema({
     favoritePoses: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Asana'
-    }]
+    }],
+    isEmailVerified: {
+        type: Boolean,
+        default: false
+    },
+    emailVerificationOtpHash: String,
+    emailVerificationOtpExpiresAt: Date,
+    emailVerificationAttemptCount: {
+        type: Number,
+        default: 0
+    }
 }, {
     timestamps: true
 });
@@ -66,6 +77,28 @@ userSchema.methods.getSignedJwtToken = function() {
 // Match password
 userSchema.methods.matchPassword = async function(enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
+};
+
+userSchema.methods.generateEmailVerificationOtp = function() {
+    const otp = `${Math.floor(100000 + Math.random() * 900000)}`;
+
+    this.emailVerificationOtpHash = crypto
+        .createHash('sha256')
+        .update(otp)
+        .digest('hex');
+    this.emailVerificationOtpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
+    this.emailVerificationAttemptCount = 0;
+
+    return otp;
+};
+
+userSchema.methods.matchEmailVerificationOtp = function(enteredOtp) {
+    const hashedOtp = crypto
+        .createHash('sha256')
+        .update(enteredOtp)
+        .digest('hex');
+
+    return this.emailVerificationOtpHash === hashedOtp;
 };
 
 module.exports = mongoose.model('User', userSchema);

@@ -1,296 +1,180 @@
-# 🧘 Yoga 3D - Interactive Yoga Learning Platform
+# Yoga 3D - Interactive Yoga Learning Platform
 
 ![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
 ![Node](https://img.shields.io/badge/node-%3E%3D14.0.0-green.svg)
 ![MongoDB](https://img.shields.io/badge/mongodb-4.4%2B-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-A comprehensive full-stack web application for learning and practicing yoga through interactive 3D visualization. Features user authentication, progress tracking, practice timers, and personalized dashboards.
+A full-stack yoga learning platform for exploring poses, tracking progress, and managing user accounts with email OTP verification.
 
----
+## Features
 
-## 🚀 Quick Start
+### Visualization
+- Interactive yoga pose viewer
+- Support for Sketchfab embeds, local GIFs, and procedural pose rendering
+- Beginner, Intermediate, and Advanced pose categories
 
-**Ready to run?** See **[NEXT_STEPS.md](NEXT_STEPS.md)** for complete setup instructions!
+### Authentication
+- Secure registration and login with JWT and bcrypt
+- Email OTP verification before first login
+- User profile, favorites, and protected dashboard features
 
-**Want real 3D models?** See **[3D_MODELS_GUIDE.md](3D_MODELS_GUIDE.md)** for where to get free models!
+### Progress Tracking
+- Practice session tracking
+- Daily streak tracking
+- Pose mastery progress
+- User dashboard with stats
 
-### TL;DR - Start in 30 seconds:
-```powershell
-# Terminal 1 - Start Backend
-cd yoga-backend
-npm start
+### API
+- Express + MongoDB backend
+- Swagger docs at `/api-docs`
 
-# Terminal 2 - Start Frontend  
-cd yoga-asana-3d
-python -m http.server 8080
-
-# Open: http://localhost:8080
-```
-
----
-
-## ✨ Features
-
-### 🎨 3D Visualization
-- **Interactive 3D Models**: Rotate and examine yoga poses from every angle using Three.js
-- **Dual Rendering System**: Supports both real .glb/.gltf models AND procedural poses
-- **Auto-Fallback**: Automatically uses procedural pose if 3D model not found
-- **Multiple Difficulty Levels**: Beginner, Intermediate, and Advanced poses
-- **Real-time Pose Rendering**: Smooth animations with realistic lighting and shadows
-- **12 Yoga Poses**: Curated collection covering all skill levels
-
-### 🔐 User Authentication
-- **Secure Registration & Login**: JWT-based authentication with bcrypt password hashing
-- **User Profiles**: Customizable avatars and experience levels
-- **Session Management**: Persistent login with token-based authentication
-
-### 📊 Progress Tracking
-- **Practice Sessions**: Record and track practice duration for each pose
-- **Streak System**: Build daily practice streaks to stay motivated
-- **Mastery Tracking**: Automatically mark poses as mastered after 10 practices
-- **Session History**: View detailed history of all practice sessions
-- **Personal Notes**: Add notes and ratings for each pose
-
-### 🎯 Interactive Features
-- **Practice Timer**: Built-in timer to track session duration
-- **Favorites System**: Save favorite poses for quick access
-- **Achievement Badges**: Unlock achievements as you progress
-- **User Dashboard**: Comprehensive stats including total practice time, streak, and mastered poses
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
-
-### 📡 RESTful API
-- **Swagger Documentation**: Interactive API documentation at `/api-docs`
-- **CORS Enabled**: Ready for cross-origin requests
-- **Error Handling**: Comprehensive error responses
-
-## 🛠️ Technology Stack
+## Tech Stack
 
 ### Backend
-- **Node.js** - Runtime environment
-- **Express.js** - Web application framework
-- **MongoDB** - NoSQL database
-- **Mongoose** - MongoDB object modeling
-- **JWT** - Authentication tokens
-- **bcryptjs** - Password hashing
-- **Swagger** - API documentation
+- Node.js
+- Express.js
+- MongoDB + Mongoose
+- JWT
+- bcryptjs
+- Nodemailer
+- Swagger
 
 ### Frontend
-- **HTML5/CSS3** - Structure and styling
-- **JavaScript (ES6+)** - Client-side logic
-- **Three.js** - 3D graphics rendering
-- **Fetch API** - HTTP requests
+- HTML
+- CSS
+- JavaScript
+- Three.js
 
-## 🚀 Quick Start
+## Quick Start
 
-### Prerequisites
-```bash
-# Node.js 14+ and npm
-node --version
-npm --version
-
-# MongoDB 4.4+ (local or Atlas)
-mongo --version
-```
-
-### Installation
-
-1. **Clone the repository**
+### 1. Clone the repository
 ```bash
 git clone <repository-url>
-cd Design_Credit_Sem4_Project
+cd yoga3D
 ```
 
-2. **Install backend dependencies**
+### 2. Install backend dependencies
 ```bash
 cd yoga-backend
 npm install
 ```
 
-3. **Configure environment variables**
-```bash
-# Create .env file in yoga-backend/
+### 3. Configure environment variables
+Create `yoga-backend/.env` from `yoga-backend/.env.example`.
+
+Example:
+
+```env
 PORT=5000
 MONGO_URI=mongodb://127.0.0.1:27017/yoga-app
 JWT_SECRET=your-secret-key-here
 JWT_EXPIRE=30d
 NODE_ENV=development
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your-gmail-address@gmail.com
+SMTP_PASS=your_16_character_app_password
+SMTP_FROM_EMAIL=your-gmail-address@gmail.com
+SMTP_FROM_NAME=Yoga3D Backend
 ```
 
-4. **Seed the database** (first time only)
+### 4. Seed the database
 ```bash
 npm run seed
 ```
 
-5. **Start the server**
+### 5. Start the backend
 ```bash
-# Development mode with auto-restart
 npm run dev
-
-# Production mode
-npm start
 ```
 
-6. **Access the application**
-- Frontend: http://localhost:5000
-- API Docs: http://localhost:5000/api-docs
+### 6. Open the app
+- App: `http://localhost:5000`
+- Register: `http://localhost:5000/register.html`
+- Verify Email: `http://localhost:5000/verify-email.html`
+- API Docs: `http://localhost:5000/api-docs`
 
-## 📋 Project Structure
+## Authentication Flow
 
-```
-Design_Credit_Sem4_Project/
-├── yoga-backend/              # Backend API
-│   ├── config/
-│   │   └── database.js        # MongoDB connection
-│   ├── controllers/
-│   │   ├── asanaController.js # Asana CRUD operations
-│   │   ├── authController.js  # Authentication logic
-│   │   └── progressController.js # Progress tracking
-│   ├── middleware/
-│   │   └── auth.js            # JWT authentication middleware
-│   ├── models/
-│   │   ├── Asana.js           # Asana schema
-│   │   ├── User.js            # User schema with auth methods
-│   │   └── UserProgress.js    # Progress tracking schema
-│   ├── routes/
-│   │   ├── asanaRoutes.js
-│   │   ├── authRoutes.js
-│   │   └── progressRoutes.js
-│   ├── utils/
-│   │   └── errorResponse.js
-│   ├── server.js              # Express app entry point
-│   ├── seed.js                # Database seeding script
-│   └── package.json
-│
-└── yoga-asana-3d/            # Frontend
-    ├── assets/
-    │   ├── css/
-    │   │   └── style.css          # Global styles
-    │   └── js/
-    │       └── api.js             # API integration module
-    ├── index.html             # 3D Viewer page
-    ├── asanas.html            # Gallery page
-    ├── dashboard.html         # User dashboard
-    ├── login.html             # Login page
-    ├── register.html          # Registration page
-    ├── about.html             # About page
-    └── contact.html           # Contact page
+1. User registers on `register.html`
+2. Backend creates an unverified account
+3. OTP is sent by email
+4. User enters the OTP on `verify-email.html`
+5. Account becomes verified and login is allowed
+
+## Project Structure
+
+```text
+yoga3D/
+|-- yoga-backend/
+|   |-- config/
+|   |-- controllers/
+|   |-- middleware/
+|   |-- models/
+|   |-- routes/
+|   |-- utils/
+|   |   |-- errorResponse.js
+|   |   `-- sendEmail.js
+|   |-- .env.example
+|   |-- seed.js
+|   |-- server.js
+|   `-- package.json
+|-- yoga-asana-3d/
+|   |-- assets/
+|   |-- index.html
+|   |-- asanas.html
+|   |-- dashboard.html
+|   |-- login.html
+|   |-- register.html
+|   `-- verify-email.html
+|-- .gitignore
+`-- README.md
 ```
 
-## 📡 API Endpoints
+## API Endpoints
 
 ### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-- `GET /api/auth/me` - Get current user (Protected)
-- `PUT /api/auth/updatedetails` - Update user profile (Protected)
-- `POST /api/auth/favorites/:asanaId` - Toggle favorite pose (Protected)
+- `POST /api/auth/register`
+- `POST /api/auth/verify-email-otp`
+- `POST /api/auth/login`
+- `GET /api/auth/me`
+- `PUT /api/auth/updatedetails`
+- `POST /api/auth/favorites/:asanaId`
 
 ### Asanas
-- `GET /api/asanas` - Get all asanas
-- `GET /api/asanas/:id` - Get single asana
+- `GET /api/asanas`
+- `GET /api/asanas/:id`
 
 ### Progress
-- `GET /api/progress` - Get all user progress (Protected)
-- `GET /api/progress/:asanaId` - Get progress for specific pose (Protected)
-- `POST /api/progress/:asanaId` - Record practice session (Protected)
-- `PUT /api/progress/:asanaId/notes` - Update practice notes (Protected)
-- `GET /api/progress/stats/user` - Get user statistics (Protected)
+- `GET /api/progress`
+- `GET /api/progress/:asanaId`
+- `POST /api/progress/:asanaId`
+- `PUT /api/progress/:asanaId/notes`
+- `GET /api/progress/stats/user`
 
-For detailed API documentation, visit `/api-docs` when the server is running.
+## Security Notes
 
-## 📚 Usage Guide
+- Do not commit your real `yoga-backend/.env`
+- Use `yoga-backend/.env.example` as the public template
+- Gmail SMTP requires 2-Step Verification and an App Password
 
-### For Users
+## Manual Test Checklist
 
-1. **Create an Account**
-   - Navigate to `/register.html`
-   - Fill in your details and select your experience level
-   - You'll be automatically logged in
+1. Start the backend with `npm run dev`
+2. Register a new account
+3. Confirm OTP email arrives
+4. Verify the OTP successfully
+5. Log in with the verified account
+6. Save a practice session and check the dashboard
 
-2. **Explore Poses**
-   - Visit the 3D Viewer to interact with poses
-   - Browse the Gallery to see all available poses
-   - Filter by difficulty level
+## Related Docs
 
-3. **Practice**
-   - Select a pose in the 3D Viewer
-   - Click "Start Practice" to begin the timer
-   - When finished, click "Save Session" to record your practice
+- [QUICK_START.md](QUICK_START.md)
+- [NEXT_STEPS.md](NEXT_STEPS.md)
+- [3D_MODELS_GUIDE.md](3D_MODELS_GUIDE.md)
 
-4. **Track Progress**
-   - View your Dashboard to see stats and achievements
-   - Monitor your practice streak
-   - See which poses you've mastered
+## License
 
-### For Developers
-
-See [FRONTEND_API_INTEGRATION.md](yoga-asana-3d/FRONTEND_API_INTEGRATION.md) for detailed integration guide.
-
-## 🔒 Security Features
-
-- **Password Hashing**: bcrypt with salt rounds
-- **JWT Tokens**: Secure token-based authentication
-- **HTTP-Only Cookies**: Protection against XSS attacks
-- **Input Validation**: Mongoose schema validation
-- **CORS Configuration**: Controlled cross-origin access
-
-## 🧪 Testing
-
-### Manual Testing
-1. Start the server: `npm run dev`
-2. Visit http://localhost:5000
-3. Register a new account
-4. Practice a few poses and save sessions
-5. Check your dashboard for updated stats
-
-### API Testing
-Use the Swagger UI at `/api-docs` to test all endpoints interactively.
-
-## 🚀 Deployment
-
-### Backend Deployment (Example: Heroku)
-```bash
-# Add MongoDB Atlas URI to environment variables
-heroku config:set MONGO_URI=your-atlas-uri
-heroku config:set JWT_SECRET=your-secret
-
-# Deploy
-git push heroku main
-```
-
-### Frontend Deployment
-The frontend is served statically by the Express server, so deploying the backend automatically deploys the frontend.
-
-## 📈 Future Enhancements
-
-- [ ] Video tutorials for each pose
-- [ ] Social features (follow friends, share progress)
-- [ ] Guided yoga sessions with sequences
-- [ ] Voice commands for hands-free practice
-- [ ] Mobile native apps (iOS/Android)
-- [ ] AI-powered pose correction using camera
-- [ ] Integration with fitness trackers
-- [ ] Personalized practice recommendations
-
-## 👥 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📝 License
-
-This project is licensed under the MIT License.
-
-## 👤 Author
-
-Design Credit Semester 4 Project
-
-## 🙏 Acknowledgments
-
-- Three.js community for excellent 3D rendering library
-- MongoDB for robust database solution
-- All yoga practitioners who inspired this project
-
----
-
-**Made with ❤️ for the yoga community**
+MIT

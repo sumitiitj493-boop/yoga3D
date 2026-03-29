@@ -215,13 +215,13 @@
         };
 
         try {
-          await yogaAPI.register(userData);
+          const response = await yogaAPI.register(userData);
           successDiv.textContent =
-            "Account created successfully! Redirecting...";
+            response.message || "Verification OTP sent. Redirecting...";
           successDiv.style.display = "block";
 
           setTimeout(() => {
-            window.location.href = "/dashboard.html";
+            window.location.href = `/verify-email.html?email=${encodeURIComponent(userData.email)}`;
           }, 1500);
         } catch (error) {
           errorDiv.textContent =
