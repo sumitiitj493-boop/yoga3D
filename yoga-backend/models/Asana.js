@@ -23,7 +23,7 @@ const asanaSchema = new mongoose.Schema({
     // 🌟 Type of 3D model
     modelType: {
         type: String,
-        enum: ['glb', 'sketchfab', 'procedural'],
+        enum: ['glb', 'sketchfab', 'gif', 'procedural'],
         default: 'procedural'
     }
 }, {

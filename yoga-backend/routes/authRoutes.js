@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { 
     register, 
+    verifyEmailOtp,
     login, 
     getMe, 
     updateDetails,
@@ -40,6 +41,32 @@ const { protect } = require('../middleware/auth');
  *         description: User registered successfully
  */
 router.post('/register', register);
+
+/**
+ * @swagger
+ * /api/auth/verify-email-otp:
+ *   post:
+ *     summary: Verify email with OTP
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - otp
+ *             properties:
+ *               email:
+ *                 type: string
+ *               otp:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Email verified successfully
+ */
+router.post('/verify-email-otp', verifyEmailOtp);
 
 /**
  * @swagger

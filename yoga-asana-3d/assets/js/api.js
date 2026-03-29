@@ -41,16 +41,23 @@ class YogaAPI {
     // ========== AUTHENTICATION ==========
     
     async register(userData) {
-        const data = await this.request('/api/auth/register', {
+        return await this.request('/api/auth/register', {
             method: 'POST',
             body: JSON.stringify(userData)
         });
-        
+    }
+
+    async verifyEmailOtp(payload) {
+        const data = await this.request('/api/auth/verify-email-otp', {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+
         this.token = data.token;
         this.user = data.user;
         localStorage.setItem('yogaToken', data.token);
         localStorage.setItem('yogaUser', JSON.stringify(data.user));
-        
+
         return data;
     }
 
