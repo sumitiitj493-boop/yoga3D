@@ -67,10 +67,12 @@ Example:
 
 ```env
 PORT=5000
+APP_URL=https://your-domain.com
+CORS_ORIGIN=https://your-domain.com
 MONGO_URI=mongodb://127.0.0.1:27017/yoga-app
 JWT_SECRET=your-secret-key-here
 JWT_EXPIRE=30d
-NODE_ENV=development
+NODE_ENV=production
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_SECURE=false
@@ -87,7 +89,7 @@ npm run seed
 
 ### 5. Start the backend
 ```bash
-npm run dev
+npm start
 ```
 
 ### 6. Open the app
@@ -95,6 +97,7 @@ npm run dev
 - Register: `http://localhost:5000/register.html`
 - Verify Email: `http://localhost:5000/verify-email.html`
 - API Docs: `http://localhost:5000/api-docs`
+- Health: `http://localhost:5000/health`
 
 ## Authentication Flow
 
@@ -159,6 +162,7 @@ yoga3D/
 - Do not commit your real `yoga-backend/.env`
 - Use `yoga-backend/.env.example` as the public template
 - Gmail SMTP requires 2-Step Verification and an App Password
+- In production, set `APP_URL`, `CORS_ORIGIN`, `MONGO_URI`, and a strong `JWT_SECRET`
 
 ## Manual Test Checklist
 

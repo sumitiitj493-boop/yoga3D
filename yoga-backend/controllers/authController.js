@@ -228,10 +228,12 @@ exports.toggleFavorite = async (req, res, next) => {
 // Helper to get token from model, create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
     const token = user.getSignedJwtToken();
+    const isProduction = process.env.NODE_ENV === 'production';
 
     const options = {
         expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
-        httpOnly: true
+        httpOnly: true,
+        sameSite: isProduction ? 'none' : 'lax'
     };
 
     if (process.env.NODE_ENV === 'production') {

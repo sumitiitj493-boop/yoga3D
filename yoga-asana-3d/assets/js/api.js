@@ -3,7 +3,10 @@
  * Handles all backend API calls with authentication
  */
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE =
+    window.location.protocol === 'file:'
+        ? 'http://localhost:5000'
+        : window.location.origin;
 
 class YogaAPI {
     constructor() {

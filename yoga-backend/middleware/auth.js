@@ -21,7 +21,8 @@ exports.protect = async (req, res, next) => {
 
     try {
         // Verify token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'yoga-secret-key-2026');
+        const jwtSecret = process.env.JWT_SECRET || 'yoga-secret-key-2026';
+        const decoded = jwt.verify(token, jwtSecret);
         req.user = await User.findById(decoded.id);
         next();
     } catch (error) {
