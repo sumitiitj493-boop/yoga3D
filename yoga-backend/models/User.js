@@ -69,7 +69,9 @@ userSchema.pre('save', async function(next) {
 
 // Sign JWT and return
 userSchema.methods.getSignedJwtToken = function() {
-    return jwt.sign({ id: this._id }, process.env.JWT_SECRET || 'yoga-secret-key-2026', {
+    const jwtSecret = process.env.JWT_SECRET || 'yoga-secret-key-2026';
+
+    return jwt.sign({ id: this._id }, jwtSecret, {
         expiresIn: process.env.JWT_EXPIRE || '30d'
     });
 };
